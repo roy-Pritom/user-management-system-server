@@ -35,33 +35,54 @@ async function run() {
 
         // Post Method
 
-        app.post('/postUser',async (req, res) => {
+        app.post('/postUser', async (req, res) => {
             const userData = req.body;
             if (!userData) {
                 return res.status(404).send({ message: "userData not Found" })
             }
-            const result= await userCollection.insertOne(userData);
+            const result = await userCollection.insertOne(userData);
             res.send(result);
         })
 
         // get method
-      app.get('/users',async (req,res)=>{
-       
-        const result=await userCollection.find().toArray();
-        res.send(result);
+        app.get('/users', async (req, res) => {
 
-      })
+            const result = await userCollection.find().toArray();
+            res.send(result);
+
+        })
 
 
-    //   delete method
-    app.delete('/users/:id',async(req,res)=>{
-      const id=req.params.id;
-      console.log(id);
-      const query={_id:new ObjectId(id)};
-      const result=await userCollection.deleteOne(query);
-      res.send(result);
+        //   Put method
+        app.put('/users/:id', async (req, res) => {
+            const data = req.body;
+            const id=req.params.id;
+            // console.log(id);
+            const filter={_id:new ObjectId(id)}
+            const updateDoc = {
+                $set: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    email: data.email,
+                    userPhoto: data.userPhoto,
+                    phoneNumber: data.phoneNumber,
+                    date: data.date
+                },
+            };
+            const result=await userCollection.updateOne(filter,updateDoc);
+            res.send(result);
 
-    })
+        })
+
+        //   delete method
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            //   console.log(id);
+            const query = { _id: new ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+
+        })
 
 
 
